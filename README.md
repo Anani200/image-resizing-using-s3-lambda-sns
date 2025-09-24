@@ -1,12 +1,13 @@
 # Image Resizing using AWS S3, Lambda, and SNS
 
-This project demonstrates how to automatically resize images uploaded to an S3 bucket using AWS Lambda and notify via SNS.
+This project demonstrates how to automatically stylize images uploaded to an S3 bucket using AWS Lambda and notify via SNS.
 
 ## Prerequisites
 
 - AWS Account
 - AWS CLI configured
 - Python 3.x
+- Node.js 18+
 - Boto3 library
 - Pillow library
 
@@ -43,9 +44,29 @@ This project demonstrates how to automatically resize images uploaded to an S3 b
 ## Usage
 
 1. **Upload an image to the `image-non-sized-1` bucket.**
-2. The Lambda function will automatically resize and compress the image.
-3. The resized image will be uploaded to the `image-sized-1` bucket.
-4. A notification will be sent to the SNS topic.
+2. The Lambda function will automatically detect whether the image is grayscale or color.
+3. Grayscale uploads are colorized, while color images are cartoonized with preserved transparency.
+4. The stylized image is uploaded to the `image-sized-1` bucket under a `stylized/` prefix.
+5. A notification is sent to the SNS topic summarizing the transformation.
+
+## Frontend control panel
+
+A React single-page application is available under `frontend/` to drive the Lambda workflow from the browser. It supports:
+
+- Uploading images directly to the source bucket using SigV4-signed requests.
+- Polling the destination bucket for the stylized output and presenting it in the UI.
+- Tracking progress with a real-time activity log and status updates.
+- Supplying optional metadata that records the desired transformation preference.
+
+To run the UI locally:
+
+```sh
+cd frontend
+npm install
+npm run dev
+```
+
+The development server listens on [http://localhost:5173](http://localhost:5173). Provide temporary AWS credentials with access to both buckets when prompted by the UI. For production deployments, host the compiled assets produced by `npm run build` behind an authenticated origin.
 
 ## License
 
